@@ -100,18 +100,68 @@
             box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
         }
 
-        .ribbon {
-            position: absolute;
-            width: 150px;
-            height: 8px;
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24, #feca57, #48dbfb);
-            animation: float 3s ease-in-out infinite;
+        .banner {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 700px;
+            height: 100px;
+            z-index: 15;
+            opacity: 0;
+            animation: bannerDrop 2s ease-out forwards;
         }
 
-        .ribbon-1 { top: 20%; left: 10%; transform: rotate(15deg); }
-        .ribbon-2 { top: 30%; right: 15%; transform: rotate(-20deg); }
-        .ribbon-3 { bottom: 25%; left: 20%; transform: rotate(45deg); }
-        .ribbon-4 { bottom: 35%; right: 10%; transform: rotate(-30deg); }
+        .banner-string {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #D4AF37, #FFD700, #D4AF37);
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .banner-flag {
+            position: absolute;
+            top: 13px;
+            width: 40px;
+            height: 55px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
+            animation: flagSway 4s ease-in-out infinite;
+        }
+
+        @keyframes bannerDrop {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-100px);
+            }
+            70% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes flagSway {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(2deg); }
+            50% { transform: translateY(-8px) rotate(0deg); }
+            75% { transform: translateY(-3px) rotate(-2deg); }
+        }
 
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(var(--rotation, 0deg)); }
@@ -673,15 +723,80 @@
         `;
         document.head.appendChild(style);
 
+        function createBanner() {
+            const banner = document.createElement('div');
+            banner.className = 'banner';
+            banner.id = 'birthdayBanner';
+            
+            // Create the hanging string
+            const string = document.createElement('div');
+            string.className = 'banner-string';
+            banner.appendChild(string);
+            
+            // Letters and their positions/colors
+            const flagData = [
+                {letter: 'H', left: '2%', bg: '#8BC34A', delay: '0s'},
+                {letter: 'A', left: '9%', bg: '#4CAF50', delay: '0.2s'},
+                {letter: 'P', left: '16%', bg: '#2196F3', delay: '0.4s'},
+                {letter: 'P', left: '23%', bg: '#03A9F4', delay: '0.6s'},
+                {letter: 'Y', left: '30%', bg: '#8BC34A', delay: '0.8s'},
+                {letter: 'B', left: '40%', bg: '#4CAF50', delay: '1s'},
+                {letter: 'I', left: '47%', bg: '#2196F3', delay: '1.2s'},
+                {letter: 'R', left: '54%', bg: '#03A9F4', delay: '1.4s'},
+                {letter: 'T', left: '61%', bg: '#8BC34A', delay: '1.6s'},
+                {letter: 'H', left: '68%', bg: '#4CAF50', delay: '1.8s'},
+                {letter: 'D', left: '75%', bg: '#2196F3', delay: '2s'},
+                {letter: 'A', left: '82%', bg: '#03A9F4', delay: '2.2s'},
+                {letter: 'Y', left: '89%', bg: '#8BC34A', delay: '2.4s'}
+            ];
+            
+            flagData.forEach(data => {
+                const flag = document.createElement('div');
+                flag.className = 'banner-flag';
+                flag.textContent = data.letter;
+                flag.style.left = data.left;
+                flag.style.backgroundColor = data.bg;
+                flag.style.animationDelay = data.delay;
+                banner.appendChild(flag);
+            });
+            
+            document.body.appendChild(banner);
+            console.log('Banner created with', flagData.length, 'flags');
+        }
+
         function createRibbons() {
-            const ribbons = ['ribbon-1', 'ribbon-2', 'ribbon-3', 'ribbon-4'];
-            ribbons.forEach((ribbonClass, index) => {
+            // Create additional ribbon decorations
+            const ribbonColors = [
+                'linear-gradient(45deg, #ff6b6b, #ee5a24)',
+                'linear-gradient(45deg, #4ecdc4, #44bd87)',
+                'linear-gradient(45deg, #a55eea, #8b5fd6)',
+                'linear-gradient(45deg, #feca57, #ff9f43)'
+            ];
+            
+            for(let i = 0; i < 4; i++) {
                 setTimeout(() => {
                     const ribbon = document.createElement('div');
-                    ribbon.className = `ribbon ${ribbonClass}`;
+                    ribbon.style.position = 'absolute';
+                    ribbon.style.width = '120px';
+                    ribbon.style.height = '6px';
+                    ribbon.style.background = ribbonColors[i];
+                    ribbon.style.borderRadius = '3px';
+                    ribbon.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                    ribbon.style.animation = 'float 3s ease-in-out infinite';
+                    ribbon.style.animationDelay = Math.random() * 2 + 's';
+                    
+                    // Position ribbons around the screen
+                    const positions = [
+                        { top: '25%', left: '10%', transform: 'rotate(15deg)' },
+                        { top: '30%', right: '15%', transform: 'rotate(-20deg)' },
+                        { bottom: '30%', left: '20%', transform: 'rotate(45deg)' },
+                        { bottom: '35%', right: '10%', transform: 'rotate(-30deg)' }
+                    ];
+                    
+                    Object.assign(ribbon.style, positions[i]);
                     document.body.appendChild(ribbon);
-                }, index * 200);
-            });
+                }, i * 200);
+            }
         }
 
         function createCake() {
@@ -807,6 +922,7 @@
 
         document.getElementById('decorationBtn').addEventListener('click', () => {
             if(currentStep === 6) {
+                createBanner();
                 createRibbons();
                 createSparkles();
                 hideElement(document.getElementById('decorationBtn'));
@@ -857,10 +973,18 @@
                 hideElement(document.getElementById('finalMsgBtn'));
                 
                 // Hide all decorations and elements
-                const elementsToHide = document.querySelectorAll('.ribbon, .balloon, .cake, .sparkles');
+                const elementsToHide = document.querySelectorAll('.balloon, .cake, .sparkles, .banner');
                 elementsToHide.forEach(element => {
                     element.style.animation = 'fadeOut 1s ease-out forwards';
                     setTimeout(() => element.remove(), 1000);
+                });
+                
+                // Also hide ribbon elements
+                document.querySelectorAll('[style*="ribbon"], [style*="float"]').forEach(element => {
+                    if(element.style.position === 'absolute' && element.style.background) {
+                        element.style.animation = 'fadeOut 1s ease-out forwards';
+                        setTimeout(() => element.remove(), 1000);
+                    }
                 });
                 
                 setTimeout(() => {
